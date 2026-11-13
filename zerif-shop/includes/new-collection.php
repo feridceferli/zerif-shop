@@ -173,7 +173,7 @@ function add_new_collection(PDO $db): void
         ["bodi","Dantel bodi Nərgiz 107","dantel-bodi-nergiz-107",118,131,"S,M,L,XL","Qara,Bej,Pudra","noir","#725065","#30222d"],
         ["ev-geyimi","Kimono xalat Nərgiz 108","kimono-xalat-nergiz-108",54,68,"S,M,L,XL","Qara,Bej,Pudra","kimono","#e6d2be","#a87b6d"],
     ];
-    $categories = $db->query('SELECT id, slug FROM categories')->fetchAll(PDO::FETCH_KEY_PAIR);
+    $categories = $db->query('SELECT slug, id FROM categories')->fetchAll(PDO::FETCH_KEY_PAIR);
     $check = $db->prepare('SELECT 1 FROM products WHERE slug = ? LIMIT 1');
     $insert = $db->prepare('INSERT INTO products (category_id, name, slug, description, material, price, old_price, sizes, colors, stock, image, gallery, is_featured, is_new, is_active, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     foreach ($products as $i => $p) {
