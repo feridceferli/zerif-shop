@@ -1,5 +1,5 @@
 <?php
-/** 45 yeni məhsul: mövcud və yeni bazalarda təkrarsız əlavə olunur. */
+/** 60 yeni məhsul: mövcud və yeni bazalarda təkrarsız əlavə olunur. */
 function add_new_collection(PDO $db): void
 {
     require_once __DIR__ . '/install.php';
@@ -49,6 +49,21 @@ function add_new_collection(PDO $db): void
         ["ev-geyimi","Xalat Soft Cotton","xalat-soft-cotton",64,82,"S,M,L,XL","Qara,Pudra,Bej","x-white-robe","#e6d2be","#a87b6d"],
         ["ev-geyimi","Atlas xalat Golden","atlas-xalat-golden",91,118,"S,M,L,XL","Qara,Pudra,Bej","x-champ-robe","#e6d2be","#a87b6d"],
         ["ev-geyimi","İpək xalat Noir","i-pek-xalat-noir",115,149,"S,M,L,XL","Qara,Pudra,Bej","x-black-robe","#e6d2be","#a87b6d"],
+        ["destler","Güllü naxışlı dantel dəst","gullu-naxisli-dantel-dest",69,89,"S,M,L,XL","Qara,Bordo,Pudra","bordo","#a65a76","#51263c"],
+        ["destler","Tül detallı qara dəst","tul-detalli-qara-dest",82,105,"S,M,L,XL","Qara,Bordo,Pudra","x-lace-set","#a65a76","#51263c"],
+        ["destler","Çiçək tikməli romantik dəst","cicek-tikmeli-romantik-dest",74,96,"S,M,L,XL","Qara,Bordo,Pudra","pudra","#a65a76","#51263c"],
+        ["destler","Bordo krujeva premium dəst","bordo-krujeva-premium-dest",97,124,"S,M,L,XL","Qara,Bordo,Pudra","bordo","#a65a76","#51263c"],
+        ["bustqalterler","Çiçək naxışlı push-up","cicek-naxisli-push-up",47,61,"75B,75C,80B,80C","Qara,Bordo,Pudra","pushup","#e8b8c5","#8e4965"],
+        ["bustqalterler","Tül balkonet zərif model","tul-balkonet-zerif-model",52,68,"75B,75C,80B,80C","Qara,Bordo,Pudra","x-elegance","#e8b8c5","#8e4965"],
+        ["bustqalterler","Yumşaq krujeva bralette","yumsaq-krujeva-bralette",33,45,"75B,75C,80B,80C","Qara,Bordo,Pudra","x-soft","#e8b8c5","#8e4965"],
+        ["trusikler","Çiçək tikməli tanga","cicek-tikmeli-tanga",19,27,"S,M,L,XL","Qara,Bordo,Pudra","silk-tanga","#e9d0c6","#b57880"],
+        ["trusikler","Tül detallı slip","tul-detalli-slip",23,31,"S,M,L,XL","Qara,Bordo,Pudra","slip3","#e9d0c6","#b57880"],
+        ["bodi","Çiçək naxışlı tül bodi","cicek-naxisli-tul-bodi",79,103,"S,M,L,XL","Qara,Bordo,Pudra","noir","#725065","#30222d"],
+        ["bodi","Qara dantel bodi","qara-dantel-bodi",85,112,"S,M,L,XL","Qara,Bordo,Pudra","noir","#725065","#30222d"],
+        ["gece-geyimleri","Saten babydoll Rose","saten-babydoll-rose",63,82,"S,M,L,XL","Qara,Bordo,Pudra","satin","#d6c3df","#83608e"],
+        ["gece-geyimleri","Tül gecəlik Midnight","tul-gecelik-midnight",72,93,"S,M,L,XL","Qara,Bordo,Pudra","x-red-long","#d6c3df","#83608e"],
+        ["gece-geyimleri","İpək gecəlik Champagne","i-pek-gecelik-champagne",88,113,"S,M,L,XL","Qara,Bordo,Pudra","x-lilac","#d6c3df","#83608e"],
+        ["ev-geyimi","Zərif saten kimono","zerif-saten-kimono",77,98,"S,M,L,XL","Qara,Bordo,Pudra","kimono","#e6d2be","#a87b6d"],
     ];
     $categories = $db->query('SELECT id, slug FROM categories')->fetchAll(PDO::FETCH_KEY_PAIR);
     $check = $db->prepare('SELECT 1 FROM products WHERE slug = ? LIMIT 1');
