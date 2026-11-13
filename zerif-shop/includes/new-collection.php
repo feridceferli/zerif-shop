@@ -176,14 +176,24 @@ function add_new_collection(PDO $db): void
     $categories = $db->query('SELECT slug, id FROM categories')->fetchAll(PDO::FETCH_KEY_PAIR);
     $check = $db->prepare('SELECT 1 FROM products WHERE slug = ? LIMIT 1');
     $insert = $db->prepare('INSERT INTO products (category_id, name, slug, description, material, price, old_price, sizes, colors, stock, image, gallery, is_featured, is_new, is_active, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    $realPhotos = [
+        'saten-babydoll-rose' => 'https://images.pexels.com/photos/20337356/pexels-photo-20337356.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'atlas-pijama-bloom' => 'https://images.pexels.com/photos/20337344/pexels-photo-20337344.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-dest-velvet' => 'https://images.pexels.com/photos/20337341/pexels-photo-20337341.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-gece-koyneyi-rose' => 'https://images.pexels.com/photos/20364779/pexels-photo-20364779.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'minimalist-gundelik-bustqalter' => 'https://images.pexels.com/photos/6568233/pexels-photo-6568233.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'tul-gecelik-midnight' => 'https://images.pexels.com/photos/19543039/pexels-photo-19543039.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'saten-gece-koyneyi-mira' => 'https://images.pexels.com/photos/10285736/pexels-photo-10285736.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-bodi-bella' => 'https://images.pexels.com/photos/26100332/pexels-photo-26100332.jpeg?auto=compress&cs=tinysrgb&w=800',
+    ];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
         if (!isset($categories[$cat])) continue;
         $check->execute([$slug]);
-        $image = unique_collection_image($slug, $name, $cat, $i);
+        $image = $realPhotos[$slug] ?? unique_collection_image($slug, $name, $cat, $i);
         if ($check->fetchColumn()) {
-            $update = $db->prepare('UPDATE products SET image = ? WHERE slug = ? AND (image NOT LIKE ? OR image IS NULL)');
-            $update->execute([$image, $slug, 'uploads/collection-%']);
+            $update = $db->prepare('UPDATE products SET image = ? WHERE slug = ? AND (image NOT LIKE ? OR image IS NULL OR ? = 1)');
+            $update->execute([$image, $slug, 'https://images.pexels.com/%', isset($realPhotos[$slug]) ? 1 : 0]);
             continue;
         }
         $insert->execute([$categories[$cat], $name, $slug,
