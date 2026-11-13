@@ -177,29 +177,32 @@ function add_new_collection(PDO $db): void
     $check = $db->prepare('SELECT 1 FROM products WHERE slug = ? LIMIT 1');
     $insert = $db->prepare('INSERT INTO products (category_id, name, slug, description, material, price, old_price, sizes, colors, stock, image, gallery, is_featured, is_new, is_active, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     $realPhotos = [
-        'saten-babydoll-rose' => 'https://images.pexels.com/photos/20337356/pexels-photo-20337356.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'atlas-pijama-bloom' => 'https://images.pexels.com/photos/20337344/pexels-photo-20337344.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-dest-velvet' => 'https://images.pexels.com/photos/20337341/pexels-photo-20337341.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-gece-koyneyi-rose' => 'https://images.pexels.com/photos/20364779/pexels-photo-20364779.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'minimalist-gundelik-bustqalter' => 'https://images.pexels.com/photos/6568233/pexels-photo-6568233.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'tul-gecelik-midnight' => 'https://images.pexels.com/photos/19543039/pexels-photo-19543039.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'saten-gece-koyneyi-mira' => 'https://images.pexels.com/photos/10285736/pexels-photo-10285736.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-bodi-bella' => 'https://images.pexels.com/photos/26100332/pexels-photo-26100332.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'saten-babydoll-rose' => 'https://images.pexels.com/photos/8731348/pexels-photo-8731348.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-dest-aysu-091' => 'https://images.pexels.com/photos/9132317/pexels-photo-9132317.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-dest-velvet' => 'https://images.pexels.com/photos/9356539/pexels-photo-9356539.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-dest-rose' => 'https://images.pexels.com/photos/9132316/pexels-photo-9132316.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'minimalist-gundelik-bustqalter' => 'https://images.pexels.com/photos/15176435/pexels-photo-15176435.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'yumsaq-krujeva-bralette' => 'https://images.pexels.com/photos/8731333/pexels-photo-8731333.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'tul-balkonet-zerif-model' => 'https://images.pexels.com/photos/8731342/pexels-photo-8731342.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'cicek-naxisli-push-up' => 'https://images.pexels.com/photos/8731370/pexels-photo-8731370.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'saten-gece-koyneyi-mira' => 'https://images.pexels.com/photos/9111557/pexels-photo-9111557.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-bodi-bella' => 'https://images.pexels.com/photos/9644057/pexels-photo-9644057.jpeg?auto=compress&cs=tinysrgb&w=800',
     ];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
         if (!isset($categories[$cat])) continue;
         $check->execute([$slug]);
-        $image = $realPhotos[$slug] ?? unique_collection_image($slug, $name, $cat, $i);
+        $image = $realPhotos[$slug] ?? null;
+        $visible = $image !== null ? 1 : 0;
         if ($check->fetchColumn()) {
-            $update = $db->prepare('UPDATE products SET image = ? WHERE slug = ? AND (image NOT LIKE ? OR image IS NULL OR ? = 1)');
-            $update->execute([$image, $slug, 'https://images.pexels.com/%', isset($realPhotos[$slug]) ? 1 : 0]);
+            $update = $db->prepare('UPDATE products SET image = COALESCE(?, image), is_active = ? WHERE slug = ?');
+            $update->execute([$image, $visible, $slug]);
             continue;
         }
         $insert->execute([$categories[$cat], $name, $slug,
             'Yeni kolleksiyadan zərif model. Rahat kəsim və gündəlik istifadə üçün uyğun materiallar.',
             'Yumşaq qarışıq parça', $price, $old, $sizes, $colors, 8 + ($i * 7 % 25),
-            $image, '[]', $i % 3 === 0 ? 1 : 0, 1, 1, date('Y-m-d H:i:s')]);
+            $image ?? '', '[]', $i % 3 === 0 ? 1 : 0, 1, $visible, date('Y-m-d H:i:s')]);
     }
 }
 
