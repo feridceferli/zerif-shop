@@ -2,9 +2,10 @@ FROM php:8.3-apache
 
 RUN docker-php-ext-install pdo_sqlite \
     && a2enmod rewrite headers \
-    && mkdir -p /var/www/html/data /var/www/html/uploads
+    && mkdir -p /var/www/html/data /var/www/html/uploads /var/lib/zerif-data/uploads
 
 COPY zerif-shop/ /var/www/html/
+RUN cp -a /var/www/html/uploads/. /var/lib/zerif-data/uploads/
 
 RUN chown -R www-data:www-data /var/www/html/data /var/www/html/uploads \
     && chmod 775 /var/www/html/data /var/www/html/uploads \
@@ -17,6 +18,8 @@ RUN a2enconf zerif-security
 COPY docker/start.sh /usr/local/bin/zerif-start
 RUN chmod +x /usr/local/bin/zerif-start
 
-ENV PORT=10000
+ENV DB_PATH=/var/lib/zerif-data/shop.sqlite \
+    UPLOAD_DIR=/var/lib/zerif-data/uploads \
+    PORT=10000
 EXPOSE 10000
 CMD ["/usr/local/bin/zerif-start"]
