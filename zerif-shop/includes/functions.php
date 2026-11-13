@@ -300,9 +300,7 @@ function status_label(string $s): string
 function payment_methods(): array
 {
     return [
-        'cash' => 'Qapıda nağd ödəniş',
-        'card_courier' => 'Qapıda kartla ödəniş (POS)',
-        'transfer' => 'Kart köçürməsi (operator əlaqə saxlayacaq)',
+        'transfer' => 'Kart köçürməsi',
     ];
 }
 
