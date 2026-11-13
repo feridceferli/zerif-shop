@@ -1,6 +1,8 @@
 FROM php:8.3-apache
 
-RUN docker-php-ext-install pdo_sqlite \
+RUN apt-get update && apt-get install -y --no-install-recommends libsqlite3-dev libpq-dev \
+    && docker-php-ext-install pdo_sqlite pdo_pgsql \
+    && rm -rf /var/lib/apt/lists/* \
     && a2enmod rewrite headers \
     && mkdir -p /var/www/html/data /var/www/html/uploads /var/lib/zerif-data/uploads
 
