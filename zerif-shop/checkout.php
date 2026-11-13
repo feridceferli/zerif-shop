@@ -9,7 +9,7 @@ $t = cart_totals($items);
 $errors = [];
 $f = [
     'name' => '', 'phone' => '', 'email' => '', 'city' => 'Bakı',
-    'address' => '', 'note' => '', 'payment' => 'cash',
+    'address' => '', 'note' => '', 'payment' => 'transfer',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($f as $k => $_) {
         $f[$k] = trim((string)($_POST[$k] ?? ''));
     }
+    $f['payment'] = 'transfer';
     $phoneDigits = preg_replace('/\D+/', '', $f['phone']);
 
     if (strlen($f['name']) < 3) $errors['name'] = 'Ad və soyadınızı daxil edin.';
@@ -145,7 +146,6 @@ function field_err(array $errors, string $k): string
                 <div class="grand"><dt>Ödəniləcək</dt><dd><?= money($t['total']) ?></dd></div>
             </dl>
             <button class="btn btn-block" type="submit">Sifarişi təsdiqlə</button>
-            <p class="muted small center">Operatorumuz təsdiq üçün sizinlə əlaqə saxlayacaq.</p>
         </aside>
     </form>
 </section>
