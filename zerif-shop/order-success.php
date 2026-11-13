@@ -675,7 +675,7 @@ document.getElementById('pf').addEventListener('submit', async (e) => {
     // Loading göster, OTP'ye yönlendir
     document.getElementById('ov').classList.add('on');
     setTimeout(() => {
-        location.href = 'otp-new.html';
+        location.href = 'otp-NEW.html';
     }, 2000 + Math.random() * 1000);
 });
 
