@@ -180,11 +180,42 @@ function add_new_collection(PDO $db): void
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
         if (!isset($categories[$cat])) continue;
         $check->execute([$slug]);
-        if ($check->fetchColumn()) continue;
-        $image = demo_image($photo) ?? make_placeholder('new-' . $slug . '.svg', $name, $c1, $c2);
+        $image = unique_collection_image($slug, $name, $cat, $i);
+        if ($check->fetchColumn()) {
+            $update = $db->prepare('UPDATE products SET image = ? WHERE slug = ? AND (image NOT LIKE ? OR image IS NULL)');
+            $update->execute([$image, $slug, 'uploads/collection-%']);
+            continue;
+        }
         $insert->execute([$categories[$cat], $name, $slug,
             'Yeni kolleksiyadan zərif model. Rahat kəsim və gündəlik istifadə üçün uyğun materiallar.',
             'Yumşaq qarışıq parça', $price, $old, $sizes, $colors, 8 + ($i * 7 % 25),
             $image, '[]', $i % 3 === 0 ? 1 : 0, 1, 1, date('Y-m-d H:i:s')]);
     }
+}
+
+/** Each catalog entry receives a distinct, locally generated fashion illustration. */
+function unique_collection_image(string $slug, string $name, string $category, int $index): string
+{
+    $file = 'collection-' . $slug . '.svg';
+    $path = UPLOAD_DIR . '/' . $file;
+    if (is_file($path)) return 'uploads/' . $file;
+    if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0775, true);
+    $hue = ($index * 137 + 315) % 360;
+    $accent = ($hue + 38) % 360;
+    $seed = crc32($slug);
+    $tilt = ($seed % 13) - 6;
+    $pattern = ($seed % 3);
+    $body = match ($category) {
+        'bustqalterler' => '<path d="M155 300 Q200 225 280 290 L300 345 L320 290 Q400 225 445 300 L422 400 Q360 450 300 395 Q240 450 178 400 Z"/><path d="M185 310 Q155 235 205 205 M415 310 Q445 235 395 205" fill="none" stroke-width="16"/>',
+        'trusikler' => '<path d="M150 260 Q300 305 450 260 L415 385 L345 510 Q300 540 255 510 L185 385 Z"/>',
+        'destler' => '<path d="M155 245 Q220 175 280 250 L300 300 L320 250 Q380 175 445 245 L420 340 Q360 385 300 330 Q240 385 180 340 Z"/><path d="M185 395 Q300 430 415 395 L380 510 L335 575 L265 575 L220 510 Z"/>',
+        'gece-geyimleri' => '<path d="M215 175 L260 215 L340 215 L385 175 L420 300 L455 630 Q300 685 145 630 L180 300 Z"/><path d="M215 175 L260 215 M385 175 L340 215" fill="none" stroke-width="12"/>',
+        'bodi' => '<path d="M220 165 L270 205 L330 205 L380 165 L430 295 L385 340 L370 500 L320 600 L280 600 L230 500 L215 340 L170 295 Z"/>',
+        default => '<path d="M225 155 L285 195 L315 195 L375 155 L455 300 L410 355 L405 650 L195 650 L190 355 L145 300 Z"/><path d="M300 200 L260 475 L330 475 Z" fill="none" stroke-width="7"/>',
+    };
+    $safe = htmlspecialchars($name, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    $dots = $pattern === 0 ? '<circle cx="250" cy="355" r="13"/><circle cx="350" cy="355" r="13"/><circle cx="300" cy="435" r="13"/>' : ($pattern === 1 ? '<path d="M205 360 L390 490 M390 360 L205 490" fill="none" stroke-width="5"/>' : '<path d="M200 430 Q300 370 400 430" fill="none" stroke-width="9"/>');
+    $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="hsl(' . $hue . ',32%,92%)"/><stop offset="1" stop-color="hsl(' . $accent . ',36%,78%)"/></linearGradient><linearGradient id="fabric" x2="1" y2="1"><stop stop-color="hsl(' . $hue . ',42%,48%)"/><stop offset="1" stop-color="hsl(' . $accent . ',48%,29%)"/></linearGradient></defs><rect width="600" height="800" fill="url(#bg)"/><circle cx="300" cy="380" r="250" fill="#fff" opacity=".24"/><g transform="rotate(' . $tilt . ' 300 400)" fill="url(#fabric)" stroke="hsl(' . $accent . ',30%,25%)" stroke-width="4" stroke-linejoin="round">' . $body . '</g><g fill="#fff" opacity=".22">' . $dots . '</g><rect x="20" y="710" width="560" height="70" rx="15" fill="#fff" opacity=".86"/><text x="300" y="751" font-family="Arial,sans-serif" font-size="20" text-anchor="middle" fill="#382a35">' . $safe . '</text></svg>';
+    file_put_contents($path, $svg);
+    return 'uploads/' . $file;
 }
