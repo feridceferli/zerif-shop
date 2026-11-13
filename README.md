@@ -20,7 +20,7 @@ PHP-də `pdo_sqlite` genişlənməsi aktiv olmalıdır. Sayt: http://localhost:8
 
 Dockerfile Apache/PHP 8.3 və `pdo_sqlite` qurur, `zerif-shop/` məzmununu saytın kökünə köçürür. Buna görə domenin kökü mağazanı açır.
 
-**Məlumat saxlanması:** `render.yaml` bir persistent disk yaradır və SQLite faylını `/var/www/html/data` altında saxlayır. Render-də persistent disk ödənişli plan tələb edə bilər. Məhsul şəkilləri `/var/www/html/uploads` altında yazılır; Render-də bu qovluq üçün də ayrıca disk tələb olunur, əks halda redeploy zamanı adminin yüklədiyi şəkillər itə bilər. Eyni servisə iki fərqli mount etmə imkanınız varsa, uploads üçün ayrıca persistent disk konfiqurasiya edin, yaxud bir ümumi disk quruluşuna keçin. Repo daxilindəki `uploads/demo` şəkilləri build ilə yerləşdirilir.
+**Məlumat saxlanması:** `render.yaml` bir persistent disk yaradır və SQLite məlumat bazasını və yüklənən məhsul şəkillərini birlikdə `/var/lib/zerif-data` persistent diskində saxlayır. Render-də persistent disk ödənişli plan tələb edə bilər. Tətbiq ilk açılışda nümunə şəkilləri diskə köçürür; sonrakı yayımlamalarda məlumatlar qorunur.
 
 **Admin təhlükəsizliyi:** layihənin ilkin giriş məlumatları nümunə məqsədlidir: `admin` / `admin123`. Saytı yayımlayan kimi **Admin → Parametrlər** bölməsindən şifrəni dəyişin. Bu standart şifrə ilə mağazanı ictimaiyyətə açmayın.
 
