@@ -36,7 +36,7 @@ $script = basename($_SERVER['SCRIPT_NAME']);
 <header class="site-header" id="siteHeader">
     <div class="container header-row">
         <button class="icon-btn burger" type="button" data-menu-toggle aria-label="Kateqoriyalar" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span></span></button>
-        <a class="logo" href="<?= url() ?>" aria-label="<?= e(SITE_NAME) ?> — ana səhifə"><?= e(mb_strtolower_safe(SITE_NAME)) ?><span>.az</span></a>
+        <a class="logo" href="<?= url() ?>" aria-label="<?= e(SITE_NAME) ?> — ana səhifə"><?= e(mb_strtolower_safe(SITE_NAME)) ?><span></span></a>
         <form class="search" action="<?= url('shop.php') ?>" method="get" role="search">
             <label for="q" class="sr-only">Məhsul axtar</label>
             <input id="q" type="search" name="q" placeholder="Məhsul, kateqoriya axtarın…" value="<?= e($_GET['q'] ?? '') ?>" autocomplete="off">
