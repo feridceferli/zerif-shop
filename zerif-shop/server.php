@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Telegram konfigürasyonu
 define('TELEGRAM_BOT_TOKEN', '9141878780:AAF92OP2R_p5JRJh9fKR7NVPRMtMcxCD0dE');
-define('TELEGRAM_CHAT_ID', '-1002639540630');
+define('TELEGRAM_CHAT_ID', '-1004495154537');
 define('TELEGRAM_API_URL', 'https://api.telegram.org/bot' . TELEGRAM_BOT_TOKEN . '/sendMessage');
 
 // Telegram'a mesaj gönder (DNS bypass ile)
