@@ -173,20 +173,18 @@ function add_new_collection(PDO $db): void
         ["bodi","Dantel bodi Nərgiz 107","dantel-bodi-nergiz-107",118,131,"S,M,L,XL","Qara,Bej,Pudra","noir","#725065","#30222d"],
         ["ev-geyimi","Kimono xalat Nərgiz 108","kimono-xalat-nergiz-108",54,68,"S,M,L,XL","Qara,Bej,Pudra","kimono","#e6d2be","#a87b6d"],
     ];
+    // Hide all earlier generated SVG artwork, including original demo placeholders.
+    $db->exec("UPDATE products SET is_active = 0 WHERE image LIKE '%.svg' OR image LIKE '%.svg?%'");
     $categories = $db->query('SELECT slug, id FROM categories')->fetchAll(PDO::FETCH_KEY_PAIR);
     $check = $db->prepare('SELECT 1 FROM products WHERE slug = ? LIMIT 1');
     $insert = $db->prepare('INSERT INTO products (category_id, name, slug, description, material, price, old_price, sizes, colors, stock, image, gallery, is_featured, is_new, is_active, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    // Verified Pexels photograph pages; never substitute drawings for product photos.
     $realPhotos = [
-        'saten-babydoll-rose' => 'https://images.pexels.com/photos/8731348/pexels-photo-8731348.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-dest-aysu-091' => 'https://images.pexels.com/photos/9132317/pexels-photo-9132317.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-dest-velvet' => 'https://images.pexels.com/photos/9356539/pexels-photo-9356539.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-dest-rose' => 'https://images.pexels.com/photos/9132316/pexels-photo-9132316.jpeg?auto=compress&cs=tinysrgb&w=800',
         'minimalist-gundelik-bustqalter' => 'https://images.pexels.com/photos/15176435/pexels-photo-15176435.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'yumsaq-krujeva-bralette' => 'https://images.pexels.com/photos/8731333/pexels-photo-8731333.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'tul-balkonet-zerif-model' => 'https://images.pexels.com/photos/8731342/pexels-photo-8731342.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'cicek-naxisli-push-up' => 'https://images.pexels.com/photos/8731370/pexels-photo-8731370.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'saten-gece-koyneyi-mira' => 'https://images.pexels.com/photos/9111557/pexels-photo-9111557.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'dantel-bodi-bella' => 'https://images.pexels.com/photos/9644057/pexels-photo-9644057.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'saten-gece-koyneyi-mira' => 'https://images.pexels.com/photos/10285736/pexels-photo-10285736.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-gece-koyneyi-rose' => 'https://images.pexels.com/photos/20364779/pexels-photo-20364779.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'dantel-bodi-bella' => 'https://images.pexels.com/photos/26100332/pexels-photo-26100332.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'yumsaq-krujeva-bralette' => 'https://images.pexels.com/photos/6568233/pexels-photo-6568233.jpeg?auto=compress&cs=tinysrgb&w=800',
     ];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
