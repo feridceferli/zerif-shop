@@ -24,5 +24,7 @@ function db(): PDO
         install_schema($pdo);
         seed_data($pdo);
     }
+    require_once __DIR__ . '/new-collection.php';
+    add_new_collection($pdo);
     return $pdo;
 }
