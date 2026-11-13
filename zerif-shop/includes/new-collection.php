@@ -1,5 +1,5 @@
 <?php
-/** 25 yeni məhsul: mövcud və yeni bazalarda təkrarsız əlavə olunur. */
+/** 45 yeni məhsul: mövcud və yeni bazalarda təkrarsız əlavə olunur. */
 function add_new_collection(PDO $db): void
 {
     require_once __DIR__ . '/install.php';
@@ -29,6 +29,26 @@ function add_new_collection(PDO $db): void
         ["ev-geyimi", "Pambıq ev xalatı Soft", "pambiq-ev-xalati-soft", 59, 79, "S/M,L/XL", "Ağ,Bej", "x-white-robe", "#e6d2be", "#a87b6d"],
         ["ev-geyimi", "İpək xalat Midnight", "i-pek-xalat-midnight", 96, 125, "S/M,L/XL", "Qara,Bordo", "x-black-robe", "#e6d2be", "#a87b6d"],
         ["ev-geyimi", "Yüngül kimono Sakura", "yungul-kimono-sakura", 71, 92, "S/M,L/XL", "Çəhrayı,Pudra", "kimono", "#e6d2be", "#a87b6d"],
+        ["bustqalterler","Bralette Stella","bralette-stella",31,43,"70B,75B,80B,85C","Qara,Pudra,Bej","x-soft","#e8b8c5","#8e4965"],
+        ["bustqalterler","Push-up Opal","push-up-opal",51,66,"70B,75B,80B,85C","Qara,Pudra,Bej","pushup","#e8b8c5","#8e4965"],
+        ["bustqalterler","Balkonet Amore","balkonet-amore",57,72,"70B,75B,80B,85C","Qara,Pudra,Bej","rose","#e8b8c5","#8e4965"],
+        ["trusikler","Slip Cotton Air","slip-cotton-air",19,27,"S,M,L,XL","Qara,Pudra,Bej","slip3","#e9d0c6","#b57880"],
+        ["trusikler","Tanga Satin Kiss","tanga-satin-kiss",22,30,"S,M,L,XL","Qara,Pudra,Bej","silk-tanga","#e9d0c6","#b57880"],
+        ["trusikler","Yüksək bel Comfort","yuksek-bel-comfort",26,35,"S,M,L,XL","Qara,Pudra,Bej","highwaist","#e9d0c6","#b57880"],
+        ["destler","Dantel dəst Ruby","dantel-dest-ruby",98,126,"S,M,L,XL","Qara,Pudra,Bej","bordo","#a65a76","#51263c"],
+        ["destler","İpək dəst Dream","i-pek-dest-dream",104,132,"S,M,L,XL","Qara,Pudra,Bej","pudra","#a65a76","#51263c"],
+        ["destler","Qara dəst Moon","qara-dest-moon",87,113,"S,M,L,XL","Qara,Pudra,Bej","x-lace-set","#a65a76","#51263c"],
+        ["destler","Zərif dəst Ivory","zerif-dest-ivory",94,121,"S,M,L,XL","Qara,Pudra,Bej","x-gift-set","#a65a76","#51263c"],
+        ["gece-geyimleri","Gecəlik Lavender","gecelik-lavender",67,86,"S,M,L,XL","Qara,Pudra,Bej","x-lilac","#d6c3df","#83608e"],
+        ["gece-geyimleri","Pijama Silk Touch","pijama-silk-touch",112,145,"S,M,L,XL","Qara,Pudra,Bej","pajama","#d6c3df","#83608e"],
+        ["gece-geyimleri","Atlas gecəlik Pearl","atlas-gecelik-pearl",77,101,"S,M,L,XL","Qara,Pudra,Bej","satin","#d6c3df","#83608e"],
+        ["gece-geyimleri","Pijama Pink Cloud","pijama-pink-cloud",86,108,"S,M,L,XL","Qara,Pudra,Bej","x-pink-pj","#d6c3df","#83608e"],
+        ["bodi","Bodi Nightfall","bodi-nightfall",89,115,"S,M,L,XL","Qara,Pudra,Bej","noir","#725065","#30222d"],
+        ["bodi","Bodi Classic Lace","bodi-classic-lace",78,99,"S,M,L,XL","Qara,Pudra,Bej","noir","#725065","#30222d"],
+        ["ev-geyimi","Kimono Morning Rose","kimono-morning-rose",82,107,"S,M,L,XL","Qara,Pudra,Bej","kimono","#e6d2be","#a87b6d"],
+        ["ev-geyimi","Xalat Soft Cotton","xalat-soft-cotton",64,82,"S,M,L,XL","Qara,Pudra,Bej","x-white-robe","#e6d2be","#a87b6d"],
+        ["ev-geyimi","Atlas xalat Golden","atlas-xalat-golden",91,118,"S,M,L,XL","Qara,Pudra,Bej","x-champ-robe","#e6d2be","#a87b6d"],
+        ["ev-geyimi","İpək xalat Noir","i-pek-xalat-noir",115,149,"S,M,L,XL","Qara,Pudra,Bej","x-black-robe","#e6d2be","#a87b6d"],
     ];
     $categories = $db->query('SELECT id, slug FROM categories')->fetchAll(PDO::FETCH_KEY_PAIR);
     $check = $db->prepare('SELECT 1 FROM products WHERE slug = ? LIMIT 1');
