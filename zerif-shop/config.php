@@ -6,10 +6,10 @@
 
 define('SITE_NAME', 'Zərif');
 define('SITE_TAGLINE', 'Qadın alt paltarı butiki');
-define('SITE_PHONE', '+994 50 000 00 00');
+define('SITE_PHONE', '+994 99 400 44 00');
 define('SITE_EMAIL', 'info@zerif.az');
 define('SITE_ADDRESS', 'Bakı şəhəri, Nizami küçəsi');
-define('WHATSAPP_NUMBER', '994500000000');      // yalnız rəqəmlər
+define('WHATSAPP_NUMBER', '994994444114');      // yalnız rəqəmlər
 define('INSTAGRAM_URL', 'https://instagram.com/');
 
 define('CURRENCY', '₼');
