@@ -363,6 +363,18 @@ function add_new_collection(PDO $db): void
         $photo = 'https://images.pexels.com/photos/' . $photoId . '/pexels-photo-' . $photoId . '.jpeg?auto=compress&cs=tinysrgb&w=800';
         $fashionInsert->execute([$categories['gece-geyimleri'] ?? null,$name,$slug,'NÜMUNƏ KATALOQ: Pexels lisenziyalı moda fotosu. Şəkildəki geyim satış anbarında təsdiqlənməyib. Qiymət mağaza üçün təklifdir; ölçü, material və təchizatçı dəqiqləşdirilməlidir. Mənbə: https://www.pexels.com/photo/' . $photoId . '/','',$price,null,'','',0,$photo,'[]',0,1,1,date('Y-m-d H:i:s')]);
     }
+    // Pexels fashion photo showcase: illustrative references, not verified stock products.
+    $boldFashionSamples = [["Çəhrayı korsetli dəst — foto nümunəsi",65,18847358],["Qara korset — foto nümunəsi",59,18332218],["Qırmızı korset — foto nümunəsi",63,30684576],["Qara dəri korsetli dəst — foto nümunəsi",79,12375738],["Qara mini don — foto nümunəsi",69,18509478],["Qara mini don və uzun çəkmə — foto nümunəsi",75,18509479],["Qara krujeva don — foto nümunəsi",72,36824567],["Qara krujeva mini don — foto nümunəsi",68,20256307],["Şəffaf krujevalı qara geyim — foto nümunəsi",82,25036946],["Qara krujeva ziyafət donu — foto nümunəsi",85,32619716]];
+    $boldFashionCheck = $db->prepare('SELECT 1 FROM products WHERE slug = ?');
+    $boldFashionInsert = $db->prepare('INSERT INTO products (category_id,name,slug,description,material,price,old_price,sizes,colors,stock,image,gallery,is_featured,is_new,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    foreach ($boldFashionSamples as $i => $sample) {
+        [$name, $price, $photoId] = $sample;
+        $slug = 'foto-numune-cesaretli-geyim-' . ($i + 1);
+        $boldFashionCheck->execute([$slug]);
+        if ($boldFashionCheck->fetchColumn()) continue;
+        $photo = 'https://images.pexels.com/photos/' . $photoId . '/pexels-photo-' . $photoId . '.jpeg?auto=compress&cs=tinysrgb&w=800';
+        $boldFashionInsert->execute([$categories['gece-geyimleri'] ?? null,$name,$slug,'NÜMUNƏ: Pexels moda fotosu, məhsulun faktiki mövcudluğu təsdiqlənməyib. Qiymət təklifidir. Mənbə: https://www.pexels.com/photo/' . $photoId . '/','',$price,null,'','',0,$photo,'[]',0,1,1,date('Y-m-d H:i:s')]);
+    }
     $usedPhotos = [];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
