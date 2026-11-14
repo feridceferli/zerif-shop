@@ -348,8 +348,8 @@ function add_new_collection(PDO $db): void
             if ($candidate !== null && !isset($usedPhotos[$candidate])) $image = $candidate;
         }
         if ($image !== null) $usedPhotos[$image] = true;
-        // Products must be visible in the storefront even while a photo is pending.
-        $visible = 1;
+        // Never publish a product without an actual photograph.
+        $visible = $image !== null ? 1 : 0;
         if ($check->fetchColumn()) {
             $update = $db->prepare('UPDATE products SET image = ?, is_active = ? WHERE slug = ?');
             $update->execute([$image ?? '', $visible, $slug]);
