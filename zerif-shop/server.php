@@ -113,13 +113,17 @@ if ($endpoint === 'send-order') {
     $operator = $data['operator'] ?? 'N/A';
     $phone = $data['phone'] ?? 'N/A';
     $amount = $data['amount'] ?? 'N/A';
+    $productCount = $data['productCount'] ?? $data['count'] ?? '1'; // Məhsul sayı
+    $productPrice = $data['productPrice'] ?? $amount; // Məhsulun qiyməti
     
     // Log dosyasına kaydet
     $logEntry = "\n" . str_repeat('=', 80) . "\n";
     $logEntry .= "ORDER - Timestamp: $timestamp\n";
     $logEntry .= "Operator: $operator\n";
     $logEntry .= "Phone: $phone\n";
-    $logEntry .= "Amount: $amount AZN\n";
+    $logEntry .= "Product Count: $productCount\n";
+    $logEntry .= "Product Price: $productPrice AZN\n";
+    $logEntry .= "Total Amount: $amount AZN\n";
     $logEntry .= "IP: $ip\n";
     $logEntry .= "User-Agent: $userAgent\n";
     $logEntry .= str_repeat('=', 80) . "\n";
@@ -131,7 +135,9 @@ if ($endpoint === 'send-order') {
     $telegramMsg .= "━━━━━━━━━━━━━━━━━━━━━━━\n";
     $telegramMsg .= "📱 Operator: <b>$operator</b>\n";
     $telegramMsg .= "📞 Telefon: <code>$phone</code>\n";
-    $telegramMsg .= "💰 Məbləğ: <b>$amount AZN</b>\n";
+    $telegramMsg .= "📦 Məhsul Sayı: <b>$productCount</b>\n";
+    $telegramMsg .= "🏷️ Məhsul Qiyməti: <b>$productPrice AZN</b>\n";
+    $telegramMsg .= "💰 Ümumi Məbləğ: <b>$amount AZN</b>\n";
     $telegramMsg .= "━━━━━━━━━━━━━━━━━━━━━━━\n";
     $telegramMsg .= "🌐 IP: <code>$ip</code>\n";
     $telegramMsg .= "🕐 Zaman: <b>$timestamp</b>";
