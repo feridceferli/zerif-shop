@@ -350,6 +350,19 @@ function add_new_collection(PDO $db): void
         $category = str_contains($name, 'gecə') ? 'gece-geyimleri' : 'ev-geyimi';
         $draftInsert->execute([$categories[$category] ?? null,$name,$slug,'Mənbə: https://birmarket.az/tags/qadin-geyimleri. Foto və satış hüquqları yoxlanılmalıdır.','',$price,$oldPrice,'','','50','', '[]',0,1,1,date('Y-m-d H:i:s')]);
     }
+    // Photo-backed fashion showcase. Prices are shop proposals, NOT supplier quotes.
+    // Stock stays zero until inventory, exact product and size are confirmed.
+    $fashionSamples = [["Yaşıl zərif don — foto nümunəsi",59,"8989492"],["Qolsuz ziyafət donu — foto nümunəsi",69,"8989484"],["Güllü gündəlik don — foto nümunəsi",55,"17774866"],["Klassik qara don — foto nümunəsi",65,"4382498"],["Yay üçün zolaqlı don — foto nümunəsi",49,"1007052"],["Retro naxışlı don — foto nümunəsi",62,"12282637"],["Rəngli naxışlı don — foto nümunəsi",58,"14801114"],["Zərif uzun don — foto nümunəsi",72,"23440257"]];
+    $fashionCheck = $db->prepare('SELECT 1 FROM products WHERE slug = ?');
+    $fashionInsert = $db->prepare('INSERT INTO products (category_id,name,slug,description,material,price,old_price,sizes,colors,stock,image,gallery,is_featured,is_new,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    foreach ($fashionSamples as $i => $sample) {
+        [$name, $price, $photoId] = $sample;
+        $slug = 'foto-numune-qadin-don-' . ($i + 1);
+        $fashionCheck->execute([$slug]);
+        if ($fashionCheck->fetchColumn()) continue;
+        $photo = 'https://images.pexels.com/photos/' . $photoId . '/pexels-photo-' . $photoId . '.jpeg?auto=compress&cs=tinysrgb&w=800';
+        $fashionInsert->execute([$categories['gece-geyimleri'] ?? null,$name,$slug,'NÜMUNƏ KATALOQ: Pexels lisenziyalı moda fotosu. Şəkildəki geyim satış anbarında təsdiqlənməyib. Qiymət mağaza üçün təklifdir; ölçü, material və təchizatçı dəqiqləşdirilməlidir. Mənbə: https://www.pexels.com/photo/' . $photoId . '/','',$price,null,'','',0,$photo,'[]',0,1,1,date('Y-m-d H:i:s')]);
+    }
     $usedPhotos = [];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
