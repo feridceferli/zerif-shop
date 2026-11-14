@@ -186,11 +186,18 @@ function add_new_collection(PDO $db): void
         'dantel-bodi-bella' => 'https://images.pexels.com/photos/26100332/pexels-photo-26100332.jpeg?auto=compress&cs=tinysrgb&w=800',
         'yumsaq-krujeva-bralette' => 'https://images.pexels.com/photos/6568233/pexels-photo-6568233.jpeg?auto=compress&cs=tinysrgb&w=800',
     ];
+    $usedPhotos = [];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
         if (!isset($categories[$cat])) continue;
         $check->execute([$slug]);
         $image = $realPhotos[$slug] ?? null;
+        // Only reuse a local demo photo when it is an actual JPG and not already assigned.
+        if ($image === null) {
+            $candidate = demo_image($photo);
+            if ($candidate !== null && !isset($usedPhotos[$candidate])) $image = $candidate;
+        }
+        if ($image !== null) $usedPhotos[$image] = true;
         $visible = $image !== null ? 1 : 0;
         if ($check->fetchColumn()) {
             $update = $db->prepare('UPDATE products SET image = COALESCE(?, image), is_active = ? WHERE slug = ?');
