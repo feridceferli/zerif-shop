@@ -379,50 +379,7 @@ function add_new_collection(PDO $db): void
         if ($alreadyExists) { $boldFashionUpdate->execute([$name, $price, $photo, $slug]); continue; }
         $boldFashionInsert->execute([$categories['gece-geyimleri'] ?? null,$name,$slug,'NÜMUNƏ: Pexels moda fotosu, məhsulun faktiki mövcudluğu təsdiqlənməyib. Qiymət təklifidir. Mənbə: https://www.pexels.com/photo/' . $photoId . '/','',$price,null,'','',0,$photo,'[]',0,1,1,date('Y-m-d H:i:s')]);
     }
-    // 150 new catalog showcase entries. Photographs are real Pexels editorial photos,
-    // not guaranteed to depict a stocked SKU. Prices are shop-set 30-100 AZN.
-    $showcasePhotos = [
-        'gece-geyimleri' => [20364775, 20364781, 7470467],
-        'bustqalterler' => [10457194, 10457175],
-        'trusikler' => [26968036, 10457175],
-        'destler' => [26968036, 10457194, 34225852],
-        'bodi' => [26100332, 15791792],
-        'ev-geyimi' => [20364775, 20364781, 7470467],
-    ];
-    $showcaseLabels = [
-        'gece-geyimleri' => 'Gecə geyimi',
-        'bustqalterler' => 'Lifçik',
-        'trusikler' => 'Alt geyimi',
-        'destler' => 'İç geyim dəsti',
-        'bodi' => 'Bodi',
-        'ev-geyimi' => 'Ev geyimi',
-    ];
-    $showcaseDistribution = [
-        'gece-geyimleri' => 35, 'bustqalterler' => 30,
-        'trusikler' => 25, 'destler' => 25, 'bodi' => 15, 'ev-geyimi' => 20,
-    ];
-    $showcaseInsert = $db->prepare('INSERT INTO products (category_id,name,slug,description,material,price,old_price,sizes,colors,stock,image,gallery,is_featured,is_new,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-    $showcaseUpdate = $db->prepare('UPDATE products SET name=?, description=?, price=?, old_price=NULL, image=?, stock=0, is_active=1 WHERE slug=?');
-    $showcaseN = 0;
-    foreach ($showcaseDistribution as $category => $count) {
-        if (!isset($categories[$category])) continue;
-        for ($j = 1; $j <= $count; $j++) {
-            $showcaseN++;
-            $slug = 'zerif-foto-kolleksiya-2026-' . str_pad((string)$showcaseN, 3, '0', STR_PAD_LEFT);
-            $name = $showcaseLabels[$category] . ' — foto kolleksiya ' . str_pad((string)$j, 2, '0', STR_PAD_LEFT);
-            $photos = $showcasePhotos[$category];
-            $photoId = $photos[($j - 1) % count($photos)];
-            $image = 'https://images.pexels.com/photos/' . $photoId . '/pexels-photo-' . $photoId . '.jpeg?auto=compress&cs=tinysrgb&w=800';
-            $price = 30 + (($showcaseN * 13 + $j * 7) % 71);
-            $description = 'Foto kataloq nümunəsi: real Pexels moda fotosu, eyni foto bir neçə nümunədə istifadə edilə bilər. Şəkildəki əşyanın ayrıca anbar mövcudluğu və ölçüləri təsdiqlənməyib. Qiymət Zərif Shop tərəfindən təyin edilmiş nümunə qiymətdir. Foto mənbə: https://www.pexels.com/photo/' . $photoId . '/';
-            $check->execute([$slug]);
-            if ($check->fetchColumn()) {
-                $showcaseUpdate->execute([$name, $description, $price, $image, $slug]);
-            } else {
-                $showcaseInsert->execute([$categories[$category], $name, $slug, $description, '', $price, null, '', '', 0, $image, '[]', 0, 1, 1, date('Y-m-d H:i:s')]);
-            }
-        }
-    }
+    // Incorrect 150-image showcase removed; existing historical records remain in database.
     $usedPhotos = [];
     foreach ($products as $i => $p) {
         [$cat, $name, $slug, $price, $old, $sizes, $colors, $photo, $c1, $c2] = $p;
