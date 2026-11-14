@@ -354,25 +354,29 @@ function add_new_collection(PDO $db): void
     // Stock stays zero until inventory, exact product and size are confirmed.
     $fashionSamples = [["Yaşıl zərif don — foto nümunəsi",59,"8989492"],["Qolsuz ziyafət donu — foto nümunəsi",69,"8989484"],["Güllü gündəlik don — foto nümunəsi",55,"17774866"],["Klassik qara don — foto nümunəsi",65,"4382498"],["Yay üçün zolaqlı don — foto nümunəsi",49,"1007052"],["Retro naxışlı don — foto nümunəsi",62,"12282637"],["Rəngli naxışlı don — foto nümunəsi",58,"14801114"],["Zərif uzun don — foto nümunəsi",72,"23440257"]];
     $fashionCheck = $db->prepare('SELECT 1 FROM products WHERE slug = ?');
+    $fashionUpdate = $db->prepare('UPDATE products SET name = ?, price = ?, image = ?, is_active = 1, stock = 0 WHERE slug = ?');
     $fashionInsert = $db->prepare('INSERT INTO products (category_id,name,slug,description,material,price,old_price,sizes,colors,stock,image,gallery,is_featured,is_new,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     foreach ($fashionSamples as $i => $sample) {
         [$name, $price, $photoId] = $sample;
         $slug = 'foto-numune-qadin-don-' . ($i + 1);
         $fashionCheck->execute([$slug]);
-        if ($fashionCheck->fetchColumn()) continue;
+        $alreadyExists = (bool)$fashionCheck->fetchColumn();
         $photo = 'https://images.pexels.com/photos/' . $photoId . '/pexels-photo-' . $photoId . '.jpeg?auto=compress&cs=tinysrgb&w=800';
+        if ($alreadyExists) { $fashionUpdate->execute([$name, $price, $photo, $slug]); continue; }
         $fashionInsert->execute([$categories['gece-geyimleri'] ?? null,$name,$slug,'NÜMUNƏ KATALOQ: Pexels lisenziyalı moda fotosu. Şəkildəki geyim satış anbarında təsdiqlənməyib. Qiymət mağaza üçün təklifdir; ölçü, material və təchizatçı dəqiqləşdirilməlidir. Mənbə: https://www.pexels.com/photo/' . $photoId . '/','',$price,null,'','',0,$photo,'[]',0,1,1,date('Y-m-d H:i:s')]);
     }
     // Pexels fashion photo showcase: illustrative references, not verified stock products.
     $boldFashionSamples = [["Çəhrayı korsetli dəst — foto nümunəsi",65,18847358],["Qara korset — foto nümunəsi",59,18332218],["Qırmızı korset — foto nümunəsi",63,30684576],["Qara dəri korsetli dəst — foto nümunəsi",79,12375738],["Qara mini don — foto nümunəsi",69,18509478],["Qara mini don və uzun çəkmə — foto nümunəsi",75,18509479],["Qara krujeva don — foto nümunəsi",72,36824567],["Qara krujeva mini don — foto nümunəsi",68,20256307],["Şəffaf krujevalı qara geyim — foto nümunəsi",82,25036946],["Qara krujeva ziyafət donu — foto nümunəsi",85,32619716]];
     $boldFashionCheck = $db->prepare('SELECT 1 FROM products WHERE slug = ?');
+    $boldFashionUpdate = $db->prepare('UPDATE products SET name = ?, price = ?, image = ?, is_active = 1, stock = 0 WHERE slug = ?');
     $boldFashionInsert = $db->prepare('INSERT INTO products (category_id,name,slug,description,material,price,old_price,sizes,colors,stock,image,gallery,is_featured,is_new,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     foreach ($boldFashionSamples as $i => $sample) {
         [$name, $price, $photoId] = $sample;
         $slug = 'foto-numune-cesaretli-geyim-' . ($i + 1);
         $boldFashionCheck->execute([$slug]);
-        if ($boldFashionCheck->fetchColumn()) continue;
+        $alreadyExists = (bool)$boldFashionCheck->fetchColumn();
         $photo = 'https://images.pexels.com/photos/' . $photoId . '/pexels-photo-' . $photoId . '.jpeg?auto=compress&cs=tinysrgb&w=800';
+        if ($alreadyExists) { $boldFashionUpdate->execute([$name, $price, $photo, $slug]); continue; }
         $boldFashionInsert->execute([$categories['gece-geyimleri'] ?? null,$name,$slug,'NÜMUNƏ: Pexels moda fotosu, məhsulun faktiki mövcudluğu təsdiqlənməyib. Qiymət təklifidir. Mənbə: https://www.pexels.com/photo/' . $photoId . '/','',$price,null,'','',0,$photo,'[]',0,1,1,date('Y-m-d H:i:s')]);
     }
     $usedPhotos = [];
