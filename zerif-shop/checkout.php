@@ -53,6 +53,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                $it['size'], $it['color'], $it['qty']]);
             }
             $db->commit();
+            
+$botToken = getenv('TELEGRAM_BOT_TOKEN');
+$chatId = getenv('TELEGRAM_CHAT_ID');
+
+if ($botToken && $chatId) {
+    $lines = [
+        "🛍 YENİ SİFARİŞ",
+        "Sifariş nömrəsi: " . $orderNo,
+        ""
+    ];
+
+    $totalCount = 0;
+
+    foreach ($items as $item) {
+        $name = $item['product']['name'];
+        $count = (int) $item['qty'];
+        $price = (float) $item['product']['price'];
+        $lineTotal = $count * $price;
+
+        $totalCount += $count;
+
+        $lines[] = "📦 Məhsul: " . $name;
+        $lines[] = "🔢 Say: " . $count;
+        $lines[] = "🏷 Qiymət: " . number_format($price, 2) . " AZN";
+        $lines[] = "💰 Cəmi: " . number_format($lineTotal, 2) . " AZN";
+        $lines[] = "";
+    }
+
+    $lines[] = "Ümumi məhsul sayı: " . $totalCount;
+    $lines[] = "Yekun məbləğ: " .
+        number_format((float)$t['total'], 2) . " AZN";
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init(
+            "https://api.telegram.org/bot" .
+            $botToken . "/sendMessage"
+        );
+
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => [
+                'chat_id' => $chatId,
+                'text' => implode("\n", $lines)
+            ],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 5
+        ]);
+
+        curl_exec($ch);
+        curl_close($ch);
+    }
+}
+
             // Optional Telegram order notification. Configure TELEGRAM_BOT_TOKEN and
             // TELEGRAM_CHAT_ID as private Render environment variables.
             $telegramToken = trim((string)(getenv('TELEGRAM_BOT_TOKEN') ?: ''));
