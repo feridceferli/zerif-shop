@@ -53,6 +53,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                $it['size'], $it['color'], $it['qty']]);
             }
             $db->commit();
+            // Optional Telegram order notification. Configure TELEGRAM_BOT_TOKEN and
+            // TELEGRAM_CHAT_ID as private Render environment variables.
+            $telegramToken = trim((string)(getenv('TELEGRAM_BOT_TOKEN') ?: ''));
+            $telegramChatId = trim((string)(getenv('TELEGRAM_CHAT_ID') ?: ''));
+            if ($telegramToken !== '' && $telegramChatId !== '' && function_exists('curl_init')) {
+                $messageLines = ["🛍 Zərif Shop — yeni sifariş", "Sifariş: " . $orderNo, ""];
+                $totalQty = 0;
+                foreach ($items as $it) {
+                    $qty = (int)$it['qty'];
+                    $totalQty += $qty;
+                    $messageLines[] = $it['product']['name'];
+                    $messageLines[] = "Say: " . $qty . " | Birinin qiyməti: " . money($it['product']['price']) . " | Cəmi: " . money($it['line']);
+                }
+                $messageLines[] = "";
+                $messageLines[] = "Ümumi məhsul sayı: " . $totalQty;
+                $messageLines[] = "Məhsulların məbləği: " . money($t['sub']);
+                $messageLines[] = "Sifarişin yekunu: " . money($t['total']);
+                $ch = curl_init('https://api.telegram.org/bot' . $telegramToken . '/sendMessage');
+                curl_setopt_array($ch, [
+                    CURLOPT_POST => true,
+                    CURLOPT_POSTFIELDS => http_build_query([
+                        'chat_id' => $telegramChatId,
+                        'text' => implode("\n", $messageLines),
+                    ]),
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_CONNECTTIMEOUT => 2,
+                    CURLOPT_TIMEOUT => 4,
+                ]);
+                // Notification failure must never invalidate an already committed order.
+                try { curl_exec($ch); } catch (Throwable $ignored) {}
+                curl_close($ch);
+            }
             cart_clear();
             $_SESSION['last_order'] = $orderNo;
             redirect(url('order-success.php?no=' . urlencode($orderNo)));
