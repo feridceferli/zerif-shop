@@ -340,7 +340,7 @@ function add_new_collection(PDO $db): void
     // Imported as inactive drafts; no image is invented or copied without permission.
     $birmarketDrafts = [["Qadınlar üçün dini ziyafət geyimi B-284, şifon, göy, ölçü 44",75,95],["Qadın üçün Tünd Göy Rəng Rahat Geyim Dəsti M Razmer",99.99,169],["Qadınlar üçün ev geyimi dəsti Lady B-615_RB, qəhvəyi, ölçü 4XL",48,65],["Qadınlar üçün ev geyimi dəsti Lady 11044_RB, qara, ölçü 3XL",48,65],["Qadınlar üçün ev geyimi dəsti Lady 10722_RB, çəhrayı, ölçü 4XL",44,65],["Qadınlar üçün ev geyimi dəsti Lady 11054_RB, qara, ölçü XXL",48,65],["Qadınlar üçün ev geyimi dəsti Lady B-608_RB, yaşıl, ölçü 4XL",48,65],["Qadınlar üçün ev geyimi dəsti Lady 10675_RB, rəngbərəng, ölçü 4XL",44,65],["Qadınlar üçün ev geyimi dəsti Lady 10745_RB, qara, ölçü 4XL",44,65],["Qadın ev geyimi dəsti WB16, pambıq, narıncı, ölçü XXXXL",34.99,null],["İsti qadın idman geyim dəsti 43-945, ağ, akril/spandeks, ölçü 3XL",37.7,70],["Qadın ev geyimi dəsti WB16, pambıq, tünd qırmızı, ölçü XXL",34.99,null],["Qadınlar üçün ev geyimi dəsti Lady 11029_RB, rəngbərəng, ölçü XXL",48,65],["Qadınlar üçün ev geyimi dəsti Lady 11061_RB, qəhvəyi, ölçü 3XL",47,70],["Qadınlar üçün ev geyimi dəsti Lady 11038_RB, göy, ölçü 4XL",47,70],["Qadınlar üçün ev geyimi dəsti Lady 11049_RB, qara, ölçü XXL",48,65],["Qadınlar üçün ev geyimi dəsti Lady B-600_RB, qəhvəyi, ölçü XXL",48,65],["Qadınlar üçün ev geyimi dəsti Lady 10743_RB, qəhvəyi, ölçü 3XL",44,65],["Qadınlar üçün ev geyimi dəsti Lady 10720_RB, qırmızı-göy, ölçü 4XL",44,65],["Qadınlar üçün ev geyimi dəsti Lady 10730_RB, qara-qəhvəyi, ölçü 3XL",44,65],["Qadınlar üçün gecə geyimi 96654734, pambıq, qara, ölçü M/L",35,null],["Qadın geyimi dəniz sarafanı",176.5,353],["Qadın üçün Qara İdman Dəsti Rahat və Şık Ev Geyimi, M Razmer",89.99,160],["Qadın ev geyimi dəsti WB16, pambıq, göy, ölçü XXXXL",34.99,null]];
     $draftCheck = $db->prepare('SELECT 1 FROM products WHERE slug = ?');
-    $draftActivate = $db->prepare('UPDATE products SET is_active = 1, stock = 0 WHERE slug = ?');
+    $draftActivate = $db->prepare('UPDATE products SET is_active = 1, stock = 50 WHERE slug = ?');
     $draftInsert = $db->prepare('INSERT INTO products (category_id,name,slug,description,material,price,old_price,sizes,colors,stock,image,gallery,is_featured,is_new,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     foreach ($birmarketDrafts as $i => $item) {
         [$name, $price, $oldPrice] = $item;
@@ -348,7 +348,7 @@ function add_new_collection(PDO $db): void
         $draftCheck->execute([$slug]);
         if ($draftCheck->fetchColumn()) { $draftActivate->execute([$slug]); continue; }
         $category = str_contains($name, 'gecə') ? 'gece-geyimleri' : 'ev-geyimi';
-        $draftInsert->execute([$categories[$category] ?? null,$name,$slug,'Mənbə: https://birmarket.az/tags/qadin-geyimleri. Foto və satış hüquqları yoxlanılmalıdır.','',$price,$oldPrice,'','','0','', '[]',0,1,1,date('Y-m-d H:i:s')]);
+        $draftInsert->execute([$categories[$category] ?? null,$name,$slug,'Mənbə: https://birmarket.az/tags/qadin-geyimleri. Foto və satış hüquqları yoxlanılmalıdır.','',$price,$oldPrice,'','','50','', '[]',0,1,1,date('Y-m-d H:i:s')]);
     }
     $usedPhotos = [];
     foreach ($products as $i => $p) {
