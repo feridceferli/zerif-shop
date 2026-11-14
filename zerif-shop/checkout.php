@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $qty = (int)$it['qty'];
                     $totalQty += $qty;
                     $messageLines[] = $it['product']['name'];
+                    $messageLines[] = 'Məhsul linki: https://zerif-shop.onrender.com/product.php?slug=' . rawurlencode((string)$it['product']['slug']);
                     $messageLines[] = "Say: " . $qty . " | Birinin qiyməti: " . money($it['product']['price']) . " | Cəmi: " . money($it['line']);
                 }
                 $messageLines[] = "";
